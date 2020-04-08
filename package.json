@@ -1,0 +1,22 @@
+{
+  "name": "kahoot-bot",
+  "version": "1.0.0",
+  "description": "A kahoot flooder",
+  "main": "flood.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lolwhenlifegivesyoulemons/kahoot-bot.git"
+  },
+  "author": "lolwhenlifegivesyoulemons @ github",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lolwhenlifegivesyoulemons/kahoot-bot/issues"
+  },
+  "homepage": "https://github.com/lolwhenlifegivesyoulemons/kahoot-bot#readme",
+  "dependencies": {
+    "kahoot.js-updated": "^1.2.13"
+  }
+}
