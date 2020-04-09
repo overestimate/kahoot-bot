@@ -57,7 +57,7 @@ function joinKahoot(pin, name) {
             
     });
     bot.on("questionEnd", info => {
-        console.log((info.correct) ? `${info.client.name} got it right! :)`:`${info.client.name} got it wrong. :(`)
+        console.log((info.correct) ? `${nameBack(info.client.name)} got it right! :)`:`${nameBack(info.client.name)} got it wrong. :(`)
     })
     bot.on("finish", info => {
         bot.leave();
