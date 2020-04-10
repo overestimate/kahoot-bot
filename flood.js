@@ -1,29 +1,20 @@
 const Kahoot = require('kahoot.js-updated'), //init
-config = require(process.cwd()+"\\config.json"), //config :)
-events = require('events');
-
+config = require(process.cwd()+"/config.json"), //config :)
+events = require('events'),
+readline = require('readline-sync');
 let i = 0,
 botNumber = 0,
-twoStep = new events.EventEmitter(),
-userChoice = new events.EventEmitter();
-function twoStepGen(userInput) {
-    newUserInput = [];
-    i = 0;
-    userInput = userInput.split(',');
-    userInput.forEach(el=>{
-        newUserInput.push(Number(el))
-        i++
-        if(i == 4) {
-            twoStep.emit('userSend', newUserInput)
-        }
-    })
-}
+answer = "",
+twoStepVar = "",
+twoStepArray = [],
+onFail = true;
+process.setMaxListeners(Number.POSITIVE_INFINITY)
 if (process.platform === "win32") {
     var rl = require("readline").createInterface({
       input: process.stdin,
       output: process.stdout
     });
-  
+    rl.setMaxListeners(Number.POSITIVE_INFINITY)
     rl.on("SIGINT", function () {
       process.emit("SIGINT");
     });
@@ -41,7 +32,11 @@ function flood(pin, name, numBots, joinSpeed) {
     }
 }
 function nameBack(name) {
-    return name.replace(/ᗩ/g, 'a').replace(/ᗷ/g, 'b').replace(/ᑕ/g, 'c').replace(/ᗪ/g, 'd').replace(/E/g, 'e').replace(/ᖴ/g, 'f').replace(/G/g, 'g').replace(/ᕼ/g, 'h').replace(/I/g, 'i').replace(/ᒍ/g, 'j').replace(/K/g, 'k').replace(/ᒪ/g, 'l').replace(/ᗰ/g, 'm').replace(/ᑎ/g, 'n').replace(/O/g, 'o').replace(/ᑭ/g, 'p').replace(/ᑫ/g, 'q').replace(/ᖇ/g, 'r').replace(/ᔕ/g, 's').replace(/T/g, 't').replace(/ᑌ/g, 'u').replace(/ᐯ/g, 'v').replace(/ᗯ/g, 'w').replace(/᙭/g, 'x').replace(/Y/g, 'y').replace(/ᘔ/g, 'z')
+    if (config.nameBypass) {
+        return name.replace(/ᗩ/g, 'a').replace(/ᗷ/g, 'b').replace(/ᑕ/g, 'c').replace(/ᗪ/g, 'd').replace(/E/g, 'e').replace(/ᖴ/g, 'f').replace(/G/g, 'g').replace(/ᕼ/g, 'h').replace(/I/g, 'i').replace(/ᒍ/g, 'j').replace(/K/g, 'k').replace(/ᒪ/g, 'l').replace(/ᗰ/g, 'm').replace(/ᑎ/g, 'n').replace(/O/g, 'o').replace(/ᑭ/g, 'p').replace(/ᑫ/g, 'q').replace(/ᖇ/g, 'r').replace(/ᔕ/g, 's').replace(/T/g, 't').replace(/ᑌ/g, 'u').replace(/ᐯ/g, 'v').replace(/ᗯ/g, 'w').replace(/᙭/g, 'x').replace(/Y/g, 'y').replace(/ᘔ/g, 'z')
+    } else {
+        return name
+    }
 }
 let disableAutoReconnect = false;
 function joinKahoot(pin, name) {
@@ -49,13 +44,59 @@ function joinKahoot(pin, name) {
     bot.setMaxListeners(Number.POSITIVE_INFINITY)
     bot.on("joined", () => {
         botNumber++
-        console.log(`${nameBack(bot.name)} joined successfully.`);
-        if(bot.name == nameBack(name)+i) {
-            console.log('All bots have joined!')
+        if (config.twoStep) {
+            if (!twoStepVar) {
+                twoStepVar = readline.question('[TWOSTEP] Separate with a comma (,) Example: t,s,c,d. t = triangle, d = diamond, c = circle, s = square.\n> ');
+                twoStepVar.replace('t', 0).replace('c', 2).replace('d', 1).replace('s', 3).split(',').forEach(e=>{
+                    twoStepArray.push(Number(e))
+                    if (twoStepArray.length == 4) {
+                        bot.answer2Step(twoStepArray)
+                    }
+                })
+            } else {
+                twoStepArray = []
+                twoStepVar.replace('t', 0).replace('c', 2).replace('d', 1).replace('s', 3).split(',').forEach(e=>{
+                    twoStepArray.push(Number(e))
+                    if (twoStepArray.length == 4) {
+                        bot.answer2Step(twoStepArray);
+                    }
+                })
+            }
+        } else {
+            console.log(`${nameBack(bot.name)} joined successfully.`);
+            if(bot.name == name+i) {
+                console.log('All bots have joined!')
+            }
         }
+        
     });
-    twoStep.on('userSend', input=>{
-        bot.answer2Step([input[0], input[1], input[2], input[3]])
+    bot.on('2StepFail', ()=>{
+            if (onFail) {
+                onFail = false;
+                twoStepVar = "";
+                twoStepArray = [];
+            } else {
+                onFail = true;
+                twoStepVar = "";
+                twoStepArray = [];
+            }
+            if (!twoStepVar) {
+                twoStepVar = readline.question('[TWOSTEP] Separate with a comma (,) Example: t,s,c,d. t = triangle, d = diamond, c = circle, s = square.\n> ');
+                twoStepVar.replace('t', 0).replace('c', 2).replace('d', 1).replace('s', 3).split(',').forEach(e=>{
+                    twoStepArray.push(Number(e))
+                    if (twoStepArray.length == 4) {
+                        bot.answer2Step(twoStepArray)
+                    }
+                })
+            } else {
+                twoStepArray = []
+                twoStepVar.replace('t', 0).replace('c', 2).replace('d', 1).replace('s', 3).split(',').forEach(e=>{
+                    twoStepArray.push(Number(e))
+                    if (twoStepArray.length == 4) {
+                        bot.answer2Step(twoStepArray);
+                    }
+                })
+            }
     })
     if (config.autoReconnect) {
         if (!disableAutoReconnect){
@@ -68,23 +109,74 @@ function joinKahoot(pin, name) {
     bot.join(pin, name+i).catch(()=>{console.log(`${bot.name} failed to join.`)});
     bot.on("questionStart", question => {
         if (question.type == "word_cloud") {
-            console.log(`${nameBack(question.client.name)} answered question ${question.index+1} out of ${question.quiz.questionCount}. It responded with 'https://github.com/lolwhenlifegivesyoulemons/kahoot-bot'`);
-            bot.answerQuestion('https://github.com/lolwhenlifegivesyoulemons/kahoot-bot');
+            if (config.userChoice) {
+                answer = readline.question('Type your answer!');
+                bot.answerQuestion(answer)
+            } else {
+                console.log(`${nameBack(question.client.name)} answered question ${question.index+1} out of ${question.quiz.questionCount}. It responded with 'https://github.com/lolwhenlifegivesyoulemons/kahoot-bot'`);
+                bot.answerQuestion('https://github.com/lolwhenlifegivesyoulemons/kahoot-bot');
+            }
         } else if (question.type == "jumble") {
+            if (config.userChoice) {
+                answer = readline.question('Type your answer! Separate answers with a comma (,). t = triangle, d = diamond, c = circle, s = square.');
+                question.answer(answer.split(','))
+            }
             console.log(`${nameBack(question.client.name)} answered question ${question.index+1} out of ${question.quiz.questionCount}. It responded with a random answer.`);
             bot.answerQuestion([Math.floor(Math.random()*question.quiz.answerCounts[question.index]), Math.floor(Math.random()*question.quiz.answerCounts[question.index]), Math.floor(Math.random()*question.quiz.answerCounts[question.index]), Math.floor(Math.random()*question.quiz.answerCounts[question.index])]);
         } else if (question.type == "quiz") {
-            console.log(`${nameBack(question.client.name)} answered question ${question.index+1} out of ${question.quiz.questionCount}. It responded with a random answer.`);
-            question.answer(Math.floor(Math.random()*question.quiz.answerCounts[question.index]));
+            if (config.userChoice) {
+                if (question.quiz.answerCounts[question.index] == 2) {
+                    if (answer) {
+                        question.answer(answer-1)
+                    } else {
+                        answer = readline.question('Type your answer! d = diamond, t = triangle.\n> ');
+                        answer = Number(answer.replace('d', 1).replace('t', 2))
+                        question.answer(answer-1);
+                    }
+                }
+                if (question.quiz.answerCounts[question.index] == 3) {
+                    if (answer) {
+                        question.answer(answer-1);
+                    } else {
+                        answer = readline.question('Type your answer! t = triangle, d = diamond, c = circle.\n> ');
+                        answer = Number(answer.replace('t', 1).replace('d', 2).replace('c', 3))
+                        question.answer(answer-1);
+                    }
+                } else if (question.quiz.answerCounts[question.index] == 4) {
+                    if (answer) {
+                        question.answer(answer-1)   
+                    } else {
+                        answer = readline.question('Type your answer! t = triangle, d = diamond, c = circle, s = square.\n> ');
+                        answer = Number(answer.replace('t', 1).replace('d', 2).replace('c', 3).replace('s', 4))
+                        question.answer(answer-1)
+                    }
+                }
+                } else {
+                console.log(`${nameBack(question.client.name)} answered question ${question.index+1} out of ${question.quiz.questionCount}. It responded with a random answer.`);
+                question.answer(Math.floor(Math.random()*question.quiz.answerCounts[question.index]));
+            }
         } else if (question.type == "survey") {
-            console.log(`${nameBack(question.client.name)} answered question ${question.index+1} out of ${question.quiz.questionCount}. It responded with a random answer.`);
-            question.answer(Math.floor(Math.random()*question.quiz.answerCounts[question.index]));
+            if (config.userChoice) {
+                answer = readline.question('Type your answer! t = triangle, d = diamond, c = circle, s = square.');
+                question.answer(Number(answer.replace('t', 0).replace('d', 1).replace('c', 2).replace('s', 3)))
+            } else {
+                console.log(`${nameBack(question.client.name)} answered question ${question.index+1} out of ${question.quiz.questionCount}. It responded with a random answer.`);
+                question.answer(Math.floor(Math.random()*question.quiz.answerCounts[question.index]));    
+            }
+            } else if (question.type == "open_ended") {
+            if (config.userChoice) {
+                answer = readline.question('Type your answer!');
+                bot.answerQuestion(answer)
+            } else {
+                console.log('Open Ended is not available for random answer. Sorry :(')
+            }
         } else {
             //nothing
         }
             
     });
     bot.on("questionEnd", info => {
+        answer = "";
         console.log((info.correct) ? `${nameBack(info.client.name)} got it right! :)`:`${nameBack(info.client.name)} got it wrong. :(`)
     })
     bot.on("finish", info => {
