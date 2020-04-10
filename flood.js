@@ -102,7 +102,7 @@ function joinKahoot(pin, name) {
         if (!disableAutoReconnect){
             bot.on('disconnect', () => {
                 console.log('Reconnected.')
-                bot.join(pin, bot.name+"a");
+                bot.join(pin, bot.name+"   ‍   ");
             })
         }
     }
