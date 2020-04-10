@@ -63,7 +63,7 @@ function joinKahoot(pin, name) {
                 })
             }
         } else {
-            console.log(`${nameBack(bot.name)} joined successfully.`);
+            console.log(`${nameBack(bot.name.replace(/   ‍   /g, ''))} joined successfully.`);
             if(bot.name == name+i) {
                 console.log('All bots have joined!')
             }
@@ -101,7 +101,6 @@ function joinKahoot(pin, name) {
     if (config.autoReconnect) {
         if (!disableAutoReconnect){
             bot.on('disconnect', () => {
-                console.log('Reconnected.')
                 bot.join(pin, bot.name+"   ‍   ");
             })
         }
@@ -144,7 +143,7 @@ function joinKahoot(pin, name) {
                     }
                 } else if (question.quiz.answerCounts[question.index] == 4) {
                     if (answer) {
-                        question.answer(answer-1)   
+                        question.answer(answer-1)
                     } else {
                         answer = readline.question('Type your answer! t = triangle, d = diamond, c = circle, s = square.\n> ');
                         answer = Number(answer.replace('t', 1).replace('d', 2).replace('c', 3).replace('s', 4))
@@ -161,7 +160,7 @@ function joinKahoot(pin, name) {
                 question.answer(Number(answer.replace('t', 0).replace('d', 1).replace('c', 2).replace('s', 3)))
             } else {
                 console.log(`${nameBack(question.client.name)} answered question ${question.index+1} out of ${question.quiz.questionCount}. It responded with a random answer.`);
-                question.answer(Math.floor(Math.random()*question.quiz.answerCounts[question.index]));    
+                question.answer(Math.floor(Math.random()*question.quiz.answerCounts[question.index]));
             }
             } else if (question.type == "open_ended") {
             if (config.userChoice) {
