@@ -37,6 +37,12 @@ function joinKahoot(pin, name) {
             console.log('All bots have joined!')
         }
     });
+    if (config.autoReconnect) {
+        bot.on('disconnect', () => {
+            console.log('Reconnected.')
+            bot.join(pin, bot.name+"a");
+        })
+    }
     bot.join(pin, name+i).catch(()=>{console.log(`${bot.name} failed to join.`)});
     bot.on("questionStart", question => {
         if (question.type == "word_cloud") {
