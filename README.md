@@ -13,6 +13,8 @@
 
 6. cd to the folder where you extracted it (go figure it out yourself lol)
 
-7. Type node flood.js
+7. Type `npm i`
 
-8. STONKS
+8. Type `node flood.js`
+
+9. STONKS
