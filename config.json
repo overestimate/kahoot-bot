@@ -3,5 +3,6 @@
     "botAmount": 100,
     "gamePin": 666,
     "joinDelay": 150,
-    "nameBypass": false
+    "nameBypass": false,
+    "autoReconnect": true
 }
