@@ -1,7 +1,23 @@
 const Kahoot = require('kahoot.js-updated'), //init
-config = require(process.cwd()+"\\config.json"); //config :)
-let i = 0;
-let botNumber = 0;
+config = require(process.cwd()+"\\config.json"), //config :)
+events = require('events');
+
+let i = 0,
+botNumber = 0,
+twoStep = new events.EventEmitter(),
+userChoice = new events.EventEmitter();
+function twoStepGen(userInput) {
+    newUserInput = [];
+    i = 0;
+    userInput = userInput.split(',');
+    userInput.forEach(el=>{
+        newUserInput.push(Number(el))
+        i++
+        if(i == 4) {
+            twoStep.emit('userSend', newUserInput)
+        }
+    })
+}
 if (process.platform === "win32") {
     var rl = require("readline").createInterface({
       input: process.stdin,
@@ -27,6 +43,7 @@ function flood(pin, name, numBots, joinSpeed) {
 function nameBack(name) {
     return name.replace(/ᗩ/g, 'a').replace(/ᗷ/g, 'b').replace(/ᑕ/g, 'c').replace(/ᗪ/g, 'd').replace(/E/g, 'e').replace(/ᖴ/g, 'f').replace(/G/g, 'g').replace(/ᕼ/g, 'h').replace(/I/g, 'i').replace(/ᒍ/g, 'j').replace(/K/g, 'k').replace(/ᒪ/g, 'l').replace(/ᗰ/g, 'm').replace(/ᑎ/g, 'n').replace(/O/g, 'o').replace(/ᑭ/g, 'p').replace(/ᑫ/g, 'q').replace(/ᖇ/g, 'r').replace(/ᔕ/g, 's').replace(/T/g, 't').replace(/ᑌ/g, 'u').replace(/ᐯ/g, 'v').replace(/ᗯ/g, 'w').replace(/᙭/g, 'x').replace(/Y/g, 'y').replace(/ᘔ/g, 'z')
 }
+let disableAutoReconnect = false;
 function joinKahoot(pin, name) {
     let bot = new Kahoot;
     bot.setMaxListeners(Number.POSITIVE_INFINITY)
@@ -37,11 +54,16 @@ function joinKahoot(pin, name) {
             console.log('All bots have joined!')
         }
     });
+    twoStep.on('userSend', input=>{
+        bot.answer2Step([input[0], input[1], input[2], input[3]])
+    })
     if (config.autoReconnect) {
-        bot.on('disconnect', () => {
-            console.log('Reconnected.')
-            bot.join(pin, bot.name+"a");
-        })
+        if (!disableAutoReconnect){
+            bot.on('disconnect', () => {
+                console.log('Reconnected.')
+                bot.join(pin, bot.name+"a");
+            })
+        }
     }
     bot.join(pin, name+i).catch(()=>{console.log(`${bot.name} failed to join.`)});
     bot.on("questionStart", question => {
@@ -66,6 +88,7 @@ function joinKahoot(pin, name) {
         console.log((info.correct) ? `${nameBack(info.client.name)} got it right! :)`:`${nameBack(info.client.name)} got it wrong. :(`)
     })
     bot.on("finish", info => {
+        disableAutoReconnect = true;
         bot.leave();
         console.log("The kahoot has ended. "+nameBack(bot.name)+" died.");
         i--
@@ -74,6 +97,7 @@ function joinKahoot(pin, name) {
         }
     });
     process.on("SIGINT", function () {
+        disableAutoReconnect = true;
         bot.leave()
         console.log("User pressed CTRL+C. "+nameBack(name)+i+" died.");
         i--

@@ -1,8 +1,10 @@
 {
-    "botName": "insert bot name ",
-    "botAmount": 100,
+    "botName": "twoStepTest",
+    "botAmount": 25,
     "gamePin": 666,
     "joinDelay": 150,
     "nameBypass": false,
-    "autoReconnect": true
+    "autoReconnect": false,
+    "twoStep": true,
+    "userChoice": false
 }
