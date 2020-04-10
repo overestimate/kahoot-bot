@@ -1,10 +1,11 @@
 {
-    "botName": "twoStepTest",
+    "botName": "insert bot name here",
     "botAmount": 25,
     "gamePin": 666,
     "joinDelay": 150,
     "nameBypass": false,
     "autoReconnect": false,
-    "twoStep": true,
-    "userChoice": false
+    "twoStep": false,
+    "userChoice": false,
+    "__comment": "twoStep is only good for small bot amounts (~15 or so)."
 }
