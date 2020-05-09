@@ -17,4 +17,6 @@
 
 8. Type `node flood.js`
 
-9. STONKS
+9. Go to http://localhost:3278
+
+10. STONKS
