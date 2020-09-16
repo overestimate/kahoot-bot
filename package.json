@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lolwhenlifegivesyoulemons/kahoot-bot.git"
+    "url": "git+https://github.com/respecting/kahoot-bot.git"
   },
-  "author": "lolwhenlifegivesyoulemons @ github",
+  "author": "respecting @ github",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lolwhenlifegivesyoulemons/kahoot-bot/issues"
+    "url": "https://github.com/respecting/kahoot-bot/issues"
   },
-  "homepage": "https://github.com/lolwhenlifegivesyoulemons/kahoot-bot#readme",
+  "homepage": "https://github.com/respecting/kahoot-bot#readme",
   "dependencies": {
     "kahoot.js-updated": "^2.0.10",
     "express": "^4.17.1",
