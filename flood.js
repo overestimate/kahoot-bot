@@ -1,5 +1,5 @@
 const Kahoot = require('kahoot.js-updated'), //init
-config = require(process.cwd()+"/config.json"), //config :)
+config = require("./config.json"), //config :)
 events = require('events'),
 readline = require('readline-sync');
 let i = 0,
